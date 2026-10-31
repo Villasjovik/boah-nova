@@ -47,10 +47,11 @@ function registerHeroLogo(container, entry) {
         reference.fit();
         const limit = reference.projectedSize();
         const floor = reference.floorY();
+        const restBottom = reference.restBottomY();
         for (const logo of group.entries) {
           if (logo === reference || !logo.ready()) continue;
           logo.fit(limit);
-          logo.alignFloor(floor);
+          logo.alignFloor(floor, restBottom);
         }
       });
     };
@@ -205,6 +206,11 @@ function initLogo3D(container) {
   }
 
   const viewHeight = () => 2 * Math.tan(camera.fov * Math.PI / 360) * camera.position.z;
+  // Vilohöjd (Lucas 2026-10-31): en lägre kundlogga svävade högt över Villa Sjöviks golv och
+  // skuggan hamnade långt under den. Loggan sänks (eller höjs) så att dess underkant i vila står
+  // lika högt över golvet som Villa Sjöviks: samma yta, samma ljus, samma avstånd till skuggan.
+  let restY = 0;
+  const FLOAT_DOWN = 44; // float-spin: 38 + 6 nedåt
   const hero = container.closest('.h-lockup');
   const layoutTop = () => {
     let top = 0;
@@ -223,10 +229,19 @@ function initLogo3D(container) {
       const y = shadowPlane?.position.y ?? (-logoBox.h / 2 - 50 + yOffset);
       return layoutTop() + (0.5 - y / viewHeight()) * container.clientHeight;
     },
-    alignFloor: floor => {
+    restBottomY: () => layoutTop() + (0.5 - (yOffset + restY - logoBox.h / 2) / viewHeight()) * container.clientHeight,
+    alignFloor: (floor, restBottom) => {
       if (!shadowPlane) return;
       const height = container.clientHeight;
-      if (height) shadowPlane.position.y = (0.5 - (floor - layoutTop()) / height) * viewHeight();
+      if (!height) return;
+      const vh = viewHeight();
+      shadowPlane.position.y = (0.5 - (floor - layoutTop()) / height) * vh;
+      if (restBottom != null && logoBox) {
+        const bottom = (0.5 - (restBottom - layoutTop()) / height) * vh;
+        // Aldrig under canvasens underkant när loggan svävar som lägst.
+        const minBottom = -vh / 2 + FLOAT_DOWN + 6;
+        restY = Math.max(bottom, minBottom) + logoBox.h / 2 - yOffset;
+      }
       requestStill();
     }
   });
@@ -420,7 +435,7 @@ function initLogo3D(container) {
           const floatX = Math.sin(t * 0.35) * 10 + Math.sin(t * 0.8) * 3;
           const depthExpansion = Math.abs(Math.sin(rotAngle)) * depth * 0.3;
           pivot.position.x = floatX + nudgeX + (nudgeX > 0 ? depthExpansion : -depthExpansion);
-          pivot.position.y = floatY + yOffset;
+          pivot.position.y = floatY + yOffset + restY;
           // Constant forward X-tilt (-7°) positions surface to catch light
           // from upper key — light shimmers across letters as Y rotates
           pivot.rotation.x = -0.12 + Math.sin(t * 0.47) * 0.04;
@@ -430,7 +445,7 @@ function initLogo3D(container) {
           const floatY = Math.sin(t * 0.33) * 5 + Math.cos(t * 0.79) * 2.5;
           const depthExpansion = Math.abs(Math.sin(rotAngle)) * depth * 0.3;
           pivot.position.x = floatX + nudgeX + (nudgeX > 0 ? depthExpansion : -depthExpansion);
-          pivot.position.y = floatY + yOffset;
+          pivot.position.y = floatY + yOffset + restY;
           pivot.rotation.x = Math.sin(t * 0.29) * 0.02 + Math.sin(t * 0.67) * 0.01;
           pivot.rotation.z = Math.cos(t * 0.37) * 0.015;
         }
@@ -443,7 +458,7 @@ function initLogo3D(container) {
       const rotScale = c * c; // 1 at front, 0 at sides, 1 at back
 
       // Float-based pulse: high logo = small/light shadow, low logo = wide/dark
-      const floatY = pivot.position.y; // current Y from float animation
+      const floatY = pivot.position.y - restY; // current Y from float animation (vilohöjden räknas bort)
       const floatNorm = (floatY + 50) / 100; // -50→0, 0→0.5, +50→1
       const heightFactor = 1.3 - Math.max(0, Math.min(1, floatNorm)) * 0.6; // low=1.3, high=0.7
 

@@ -1302,12 +1302,6 @@ position:relative;overflow:hidden;transition:color .35s}
 
 
 /* BOAH NOVA · KAPPx: offset circular screens and a round aperture, sampled from the official lit product photo. */
-.bn-light{position:absolute;inset:-3%;z-index:1;pointer-events:none;overflow:hidden;opacity:.4;
-  transform-origin:50% 65%;animation:bn-light-breathe 64s ease-in-out infinite;contain:paint}
-.bn-light svg{display:block;width:100%;height:100%;position:absolute;inset:0}
-@keyframes bn-light-breathe{0%,100%{transform:translate3d(-.4%,.3%,0) rotate(-.7deg);opacity:.34}50%{transform:translate3d(.6%,-.4%,0) rotate(.7deg);opacity:.44}}
-@media(max-width:640px){.bn-light{inset:-2%;opacity:.36}.bn-light-secondary{display:none}.bn-light-main{transform:translate(-150px,60px)} }
-@media(prefers-reduced-motion:reduce){.bn-light{animation:none;transform:none;opacity:.38}}
 
 /* Product information and shop links. */
 .sp-body a,.pkg-boost-desc a{color:inherit;text-decoration-color:rgba(212,168,75,.6);text-underline-offset:3px}
@@ -1348,26 +1342,6 @@ html.perf-lite .ws .w i{filter:none!important}
 <div id="pwrap">
 <!-- HERO -->
 <section id="sec-hero">
-  <div class="bn-light" aria-hidden="true">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" focusable="false">
-      <defs>
-        <radialGradient id="bn-warm"><stop stop-color="#f0c878" stop-opacity=".8"/><stop offset=".55" stop-color="#d4a84b" stop-opacity=".46"/><stop offset="1" stop-color="#d4a84b" stop-opacity="0"/></radialGradient>
-        <radialGradient id="bn-edge"><stop offset=".9" stop-color="#021a0e"/><stop offset=".97" stop-color="#021a0e" stop-opacity=".97"/><stop offset="1" stop-color="#021a0e" stop-opacity="0"/></radialGradient>
-        <radialGradient id="bn-aperture"><stop stop-color="#f0c878" stop-opacity=".7"/><stop offset=".3" stop-color="#d4a84b" stop-opacity=".32"/><stop offset="1" stop-color="#d4a84b" stop-opacity="0"/></radialGradient>
-      </defs>
-      <g class="bn-light-main" transform="rotate(-24 285 580)">
-        <ellipse cx="235" cy="555" rx="520" ry="550" fill="url(#bn-warm)"/>
-        <ellipse cx="360" cy="555" rx="330" ry="430" fill="url(#bn-edge)"/>
-        <ellipse cx="265" cy="635" rx="310" ry="410" fill="url(#bn-edge)"/>
-        <ellipse cx="258" cy="625" rx="70" ry="88" fill="url(#bn-aperture)"/>
-      </g>
-      <g class="bn-light-secondary" opacity=".48" transform="rotate(28 1320 180)">
-        <ellipse cx="1360" cy="150" rx="390" ry="470" fill="url(#bn-warm)"/>
-        <ellipse cx="1260" cy="170" rx="275" ry="375" fill="url(#bn-edge)"/>
-        <ellipse cx="1360" cy="235" rx="270" ry="350" fill="url(#bn-edge)"/>
-      </g>
-    </svg>
-  </div>
 
   <div class="h-orb-p" data-par="-28,-18" aria-hidden="true"><div class="h-orb h-orb-1"></div></div>
   <div class="h-orb-p" data-par="22,14" aria-hidden="true"><div class="h-orb h-orb-2"></div></div>
